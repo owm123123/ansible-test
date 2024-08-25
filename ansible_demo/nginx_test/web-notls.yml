@@ -1,0 +1,62 @@
+- name: Configure webserver with nginx
+  hosts: webservers
+  become: True
+  tasks:
+
+    #- name: install nginx
+    # apt: 
+    #   name: nginx 
+    #   update_cache: yes
+
+    - name: install nginx if not already installed
+      shell: |
+        if ! dpkg -l | grep -q nginx; then
+          apt-get update && apt-get install -y nginx;
+        else
+          echo "Nginx is alreafy installed.";
+        fi
+      args:
+        warn: false
+
+    - name: copy TLS key
+      copy:
+        src: files/nginx.crt
+        dest: "{{ key_file }}"
+        owner: owm30912
+        mode: 0600
+      notify: restart nginx
+
+    - name: copy TLS certificate
+      copy:
+        src: files/nginx.crt
+        dest: "{{ cert_file }}"
+      notify: restart nginx
+
+    - name: copy nginx config file
+      copy:
+        src: /home/owm30912/ansible_demo/nginx_test/files/nginx.conf 
+        dest: /etc/nginx/sites-available/default
+        remote_src: yes
+
+    - name: enable configuration
+      file:
+        dest: /etc/nginx/sites-enabled/default
+        src: /etc/nginx/sites-available/default
+        state: link
+
+    - name: copy index.html
+      template: 
+        src: playbooks/templates/index.html.j2 
+        dest: /usr/share/nginx/html/index.html
+        mode: 0644
+        remote_src: yes
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+  handlers: 
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

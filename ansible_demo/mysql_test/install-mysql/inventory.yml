@@ -1,0 +1,8 @@
+all:
+  vars:
+    db_user: owm30912_post
+    db_pass: 12345
+    db_name: owm30912_db
+  hosts:
+    mysql:
+      ansible_host: 172.21.198.29

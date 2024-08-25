@@ -1,0 +1,16 @@
+all:
+  vars:
+    key_file: /etc/nginx/ssl/nginx.key
+    cert_file: /etc/nginx/ssl/nginx.crt
+    conf_file: /etc/nginx/sites-available/default
+    server_names: localhost
+  hosts:
+    webservers:
+      ansible_host: 172.21.198.29
+      ansible_user: owm30912
+        #vars: 
+        #key_file: /etc/nginx/ssl/nginx.key
+        #cert_file: /etc/nginx/ssl/nginx.crt
+        #conf_file: /etc/nginx/sites-available/default
+        #server_name: localhost
+

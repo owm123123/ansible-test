@@ -1,0 +1,5 @@
+all:
+  hosts:
+    user1:
+      ansible_host: 172.21.198.29
+      ansible_user: owm30912
