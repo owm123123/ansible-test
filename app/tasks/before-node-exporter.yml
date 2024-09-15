@@ -1,0 +1,25 @@
+- name: Create node_exporter cert dir
+  file:
+    path: /etc/node_exporter/
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+
+- name: Create private key
+  openssl_privatekey:
+    path: /etc/node_exporter/tls.key
+    mode: 0666
+
+- name: Create CSR
+  openssl_csr:
+    privatekey_path: /etc/node_exporter/tls.key
+    path: /etc/node_exporter/tls.csr
+    mode: 0666
+
+- name: Create cert and key
+  openssl_certificate:
+    path: /etc/node_exporter/tls.cert
+    csr_path: /etc/node_exporter/tls.csr
+    privatekey_path: /etc/node_exporter/tls.key
+    provider: selfsigned

@@ -1,0 +1,17 @@
+- name: handle prometheus
+  hosts:
+    - vagrant3
+    #    - localhost
+  become: true
+  roles:
+    - prometheus.prometheus.prometheus
+  vars:
+    prometheus_scrape_configs:
+      - job_name: 'node'
+        static_configs:
+          - targets:
+             - 10.0.0.101:9100
+             - 10.0.0.102:9100
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true

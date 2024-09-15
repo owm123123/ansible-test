@@ -1,0 +1,28 @@
+- name: download mysql exporter
+  get_url:
+    url: https://github.com/prometheus/mysqld_exporter/releases/download/v0.15.1/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+    dest: /home/vagrant
+    mode: 766
+
+- name: create mysql.exporter folder
+  file:
+    path: /usr/local/mysqld_exporter
+    owner: vagrant
+    group: vagrant
+    mode: 0766
+    state: directory
+
+- name: unarchive mysql.exporter.tar.gz
+  unarchive:
+    src: /home/vagrant/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+    dest: /home/vagrant
+    remote_src: yes
+
+- name: copy mysqlid_exporter into /user/local
+  #  hosts: vagrant3
+  copy:
+    src: /home/vagrant/mysqld_exporter-0.15.1.linux-amd64/mysqld_exporter
+    dest: /usr/local/mysqld_exporter/mysqld_exporter
+    mode: 0766
+
+      #- name: 

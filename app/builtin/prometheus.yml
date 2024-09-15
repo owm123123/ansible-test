@@ -1,0 +1,30 @@
+---
+- name: create promethues service
+  hosts: vagrant3
+  become: true
+  tasks:
+    - name: 10.0.0.103 connect test
+      ping:
+
+    - import_tasks: task/install-prometheus.yml
+
+- name: create promethues service
+  hosts: vagrant2
+  become: true
+  tasks:
+    - import_tasks: task/mysql-exporter.yml
+
+  handlers:
+    - name: restart_prometheus
+      service:
+        name: prometheus
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+  handlers:
+    - name: reload_prometheus
+      uri:
+        url: http://localhost:9090/-/reload
+        method: POST
+        status_code: 200

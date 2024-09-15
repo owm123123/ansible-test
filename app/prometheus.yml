@@ -1,0 +1,49 @@
+---
+- name: handle node_exporter role
+  hosts: 
+    - vagrant1
+    - vagrant2
+      #- localhost
+  become: true
+  tasks:
+    - name: 10.0.0.101 & 10.0.0.102 connect test
+      ping:
+
+    - import_tasks: tasks/before-node-exporter.yml
+
+- name: install node_exporter
+  hosts:
+    - vagrant1
+    - vagrant2
+      #- localhost
+  become: true
+  roles:
+    - prometheus.prometheus.node_exporter
+  vars:
+    node_exporter_tls_server_config:
+      cert_file: /etc/node_exporter/tls.cert
+      key_file: /etc/node_exporter/tls.key
+    notify:
+      - Restart node_exporter
+  handlers:
+    - name: Restart node_exporter
+      service:
+        name: node_exporter
+        state: restarted
+
+- name: handle prometheus
+  hosts:
+    - vagrant3
+    #    - localhost
+  become: true
+  roles:
+    - prometheus.prometheus.prometheus
+  vars:
+    prometheus_targets:
+      node:
+        - targets:
+           - 10.0.0.101:9100
+           - 10.0.0.102:9100
+          scheme: https
+          tls_config:
+            insecure_skip_verify: true

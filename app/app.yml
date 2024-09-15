@@ -1,0 +1,87 @@
+- name: create app server
+  hosts: app
+  become: true
+  tasks:
+    - name: Ping app host
+      ansible.builtin.ping:
+
+    - name: create file
+      ansible.builtin.copy:
+        content: "create file test"
+        dest: /home/vagrant/test
+
+          #    - name: Ensure apt cache is updated
+          #      ansible.builtin.apt:
+          #        update_cache: yes
+
+    - name: install java17
+      ansible.builtin.apt:
+        name: openjdk-17-jdk
+        state: present
+
+    - name: create java file
+      ansible.builtin.file:
+        path: /usr/local/src/java/
+        owner: vagrant
+        group: vagrant
+        state: directory
+        mode: 0777
+
+    - name: copy jar for app hosts
+      ansible.builtin.copy:
+        src: /usr/local/src/java/app.jar
+        dest: /usr/local/src/java/app.jar
+        owner: vagrant
+        group: vagrant
+        mode: 0766
+
+    - name: create a service
+      template: 
+        src: /etc/systemd/system/app.service
+        dest: /etc/systemd/system/app.service
+        owner: root
+        group: root
+        mode: 0766
+
+    - name: create java file
+      ansible.builtin.file:
+        path: /home/vagrant/app
+        owner: vagrant
+        group: vagrant
+        state: directory
+        mode: 0777
+
+    - name: create java file
+      ansible.builtin.file:
+        path: /home/vagrant/app/workspace/
+        owner: vagrant
+        group: vagrant
+        state: directory
+        mode: 0777
+
+    - name: create execute bash
+      #script: /home/vagrant/app/workspace/app.sh
+      #ansible-builtin.shell:
+      ansible.builtin.copy:
+        #cmd: ls -l | grep log
+        #chdir: somedir/
+        #src: /home/vagrant/app/workspace/app.sh
+        dest: /home/vagrant/app/workspace/app.sh
+        content: >
+          #!/bin/sh
+
+          sudo /usr/bin/java
+          -jar /usr/local/src/java/app.jar
+          server config.yml
+        owner: vagrant
+        group: vagrant
+        mode: 0766
+        #
+    - name: systemd app service
+      ansible.builtin.systemd:
+        name: app
+        daemon_reload: true
+        enabled: true
+        state: restarted
+
+

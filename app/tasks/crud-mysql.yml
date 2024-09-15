@@ -1,0 +1,20 @@
+    - name: Connect mysql
+      community.mysql.mysql_db:
+        check_implicit_admin: true
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_pass }}"
+        name: "{{ db_name }}"
+        state: present
+
+    - name: Create owm30912_db table
+      community.mysql.mysql_query:
+        login_db: "{{ db_name }}"
+        query: >
+          CREATE TABLE {{ db_name }}.member (
+          `id` int(11) NOT NULL auto_increment,
+          `username` varchar(50) NOT NULL,
+          `password` varchar(50) NOT NULL,
+          PRIMARY KEY (`id`)
+          ) ENGINE=InnoDB
+          DEFAULT CHARSET=utf8mb4
+          COLLATE=utf8mb4_0900_ai_ci;

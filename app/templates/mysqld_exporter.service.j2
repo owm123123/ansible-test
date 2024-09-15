@@ -1,0 +1,13 @@
+[Unit]
+Description=Mysqld_exporter service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/mysqld_exporter/mysqld_exporter
+
+Restart=on-failure
+ExecStop=/bin/kill -9 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

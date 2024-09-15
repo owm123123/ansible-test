@@ -1,0 +1,22 @@
+- name: create mysql service
+  hosts: db
+  become: true
+  tasks:
+    - name: 10.0.0.102 connect test
+      ansible.builtin.ping:
+
+        #- name: install mysql service
+        #ansible.builtin.import_tasks:
+        #file: /home/vagrant/app/task/install-mysql.yml 
+        #
+    - import_tasks: task/install-mysql.yml
+    - import_tasks: task/crud-mysql.yml
+
+
+  handlers:
+    - name: Restart mysql
+      service:
+        name: mysql
+        state: restarted
+
+          #  - import_tasks: /home/vagrant/app/task/crud-mysql.yml
