@@ -1,0 +1,10 @@
+- name: handle grafana
+  hosts:
+    - vagrant3
+    - localhost
+  roles:
+    - grafana.grafana.grafana
+  vars:
+    grafana_security:
+      admin_user: admin
+      admin_password: admin
